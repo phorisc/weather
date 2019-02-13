@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
+    <script src='//openweathermap.org/themes/openweathermap/assets/vendor/owm/js/d3.min.js'></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <script>
+        function getWeather(zipcode) {
+            gettingData = true;
+            var app_id = "@ViewData["app_id"]";
+            var requestString = "https://api.openweathermap.org/data/2.5/weather?zip=" + zipcode + "&units=imperial&APPID=" + app_id;
+            request = new XMLHttpRequest();
+            request.onload = function (data) {
+                document.getElementById("response").hidden = false;
+                var information = JSON.parse(request.response);
+                document.getElementById("city").innerHTML = information.name + ", " + information.sys.country;
+                document.getElementById("temperature").innerHTML = information.main.temp + "°F " + information.weather[0].description + " LOW:" + information.main.temp_min + " HIGH: " + information.main.temp_max;
+                document.getElementById("weather_icon").innerHTML = '<img src="//openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/' + information.weather[0].icon + '.png" width="128" height="128" class="weather-left-card__img">' + '<span>Humidity: ' + information.main.humidity + ' Pressure: ' + information.main.pressure + '</span>';
+                console.log(request.response);
+            };
+            request.open("get", requestString, true);
+            request.send();
+        };
+    </script>
+
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <h3>Welcome, please enter a zip code to find your weather forcast.</h3>
+
+    <form>
+        Zip:<br>
+        <input id="zipcode" type="text" name="zip"><br><br />
+        <input id="submit" type="button" value="Submit" onclick="getWeather(document.getElementById('zipcode').value);" />
+    </form>
+    <div id="response" hidden=true>
+        <br /><br />
+        <div class="panel panel-primary">
+            <div id="weather_info_heading" class="panel-heading"><h2><i class='fas fa-city'>:</i><span id="city">City</span></h2></div>
+            <div id="weather_info" class="panel-body">
+                <span>Temperature °F</span><h2 id="temperature">45 °F</h2>
+                <span id="weather_icon"></span>
+            </div>
+        </div>
+    </div>
+</div>
